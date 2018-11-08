@@ -1,0 +1,138 @@
+
+# Nodejs
+------------------------
+
+  ~ cd /home/tools
+  - wget (nodejs from web) | wget http://nodejs.org/dist/v11.1.0/node-v11.1.0.tar.gz
+  - tar xzvf node-v* && cd node-v*
+  - yum groupinstall "Development Tools"
+  - ./configure; make
+  - make install
+  ~ node --version
+// SETUP:
+
+# MongoDB
+------------------------
+
+  # Installation:
+    - nano /etc/yum.repos.d/mongodb-org-4.0.repo:
+        [mongodb-org-4.0]
+        name=MongoDB Repository
+        baseurl=https://repo.mongodb.org/yum/redhat/$releasever/mongodb-org/4.0/x86_64/
+        gpgcheck=1
+        enabled=1
+        gpgkey=https://www.mongodb.org/static/pgp/server-4.0.asc
+
+    - yum install -y mongodb-org
+
+  # Setup:
+    - yum install policycoreutils-python
+    - semanage port -a -t mongod_port_t -p tcp 27017
+    ~ getenforce
+    ~ sestatus
+    - nano /etc/selinux/config:
+      - SELINUX=enforcing
+      + SELINUX=permissive
+
+    - [reboot]
+    - service mongod start
+    ~ (to check): nano /var/log/mongodb/mongod.log:
+        [initandlisten] waiting for connections on port <port>
+
+    - opt/(ensure following a system reboot ):
+        sudo chkconfig mongod on
+
+    ~ sudo service mongod stop
+    ~ sudo service mongod restart
+    ~ ps aux | grep mongod
+    ~ systemctl status mongod
+
+# Nginx
+------------------------
+
+  - yum install zlib zlib-devel openssl openssl-devel
+  ~ cd /home/tools 
+  - /get from website/
+  - ./configure --sbin-path=/usr/bin/nginx --conf-path=/etc/nginx/nginx.conf --error-log-path=/var/log/nginx/error.log --http-log-path=/var/log/nginx/access.log --with-pcre --pid-path=/var/run/nginx.pid --with-http_ssl_module --with-http_v2_module --without-http_autoindex_module
+  - nano /lib/systemd/system/nginx.service:
+      [Unit]
+      Description=The NGINX HTTP and reverse proxy server
+      After=syslog.target network.target remote-fs.target nss-lookup.target
+
+      [Service]
+      Type=forking
+      PIDFile=/var/run/nginx.pid
+      ExecStartPre=/usr/bin/nginx -t
+      ExecStart=/usr/bin/nginx
+      ExecReload=/usr/bin/nginx -s reload
+      ExecStop=/bin/kill -s QUIT $MAINPID
+      PrivateTmp=true
+
+      [Install]
+      WantedBy=multi-user.target
+
+  - systemctl start nginx
+  ~ ps aux | grep nginx
+  ~ systemctl status nginx
+  - systemctl enable nginx
+  ~ systemctl list-units | grep nginx
+
+  ~ ulimit -n
+
+# Firewall
+------------------------
+  - firewall-cmd --zone=public --add-port=80/tcp --permanent
+  - firewall-cmd --reload
+
+# https
+------------------------
+  - yum -y install yum-utils
+  - yum-config-manager --enable rhui-REGION-rhel-server-extras rhui-REGION-rhel-server-optional
+  - sudo yum install python2-certbot-nginx
+
+  - certbot --nginx 
+  ~ certbot renew --dry-run
+  - crontab -r > nano:
+  @daily certbot renew
+  0 0,12 * * * python -c 'import random; import time; time.sleep(random.random() * 3600)' && certbot renew 
+  ~ crontab -
+
+// TROUBLESHOOT:
+
+# Network issue && SSH
+------------------------
+
+  - nmcli d
+  - nano /etc/ssh/sshd_config
+  ~ ssh-keygen
+  ~ service sshd restart 
+
+// OTHER:
+
+# Jenkins
+------------------------
+
+  - wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat-stable/jenkins.repo
+  - rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io.key
+
+
+  - docker run \
+    --rm \
+    -u root \
+    -p 8080:8080 \
+    -v jenkins-data:/var/jenkins_home \
+    -v /var/run/docker.sock:/var/run/docker.sock \
+    -v "$HOME":/home \
+    jenkinsci/blueocean
+
+    -yum install links
+    -http://localhost:8080
+
+
+    - sudo yum install -y yum-utils \
+    device-mapper-persistent-data \
+    lvm2
+    - sudo yum-config-manager \
+    --add-repo \
+    https://download.docker.com/linux/centos/docker-ce.repo
+    - yum install docker-ce
