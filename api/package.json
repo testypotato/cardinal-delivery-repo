@@ -1,0 +1,31 @@
+{
+  "name": "cardinal-api",
+  "version": "1.0.0",
+  "description": "This is the api server for the for Cardinal-order-manager",
+  "author": "",
+  "license": "ISC",
+  "keywords": [
+    "cardinal-api",
+    "cardinal-order-manager-api",
+    "cardinal-om-api",
+    "com-api"
+  ],
+  "main": "webpack.config.js",
+  "scripts": {
+    "start": "pm2 reload api",
+    "build": "npm i",
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.18.3",
+    "cors": "^2.8.4",
+    "express": "^4.16.3",
+    "express-subdomain": "^1.0.5",
+    "jsonwebtoken": "^8.3.0",
+    "lodash": "^4.17.11",
+    "mongodb": "^3.1.6",
+    "mongoose": "^5.2.8",
+    "morgan": "^1.9.1",
+    "subdomain": "^1.2.0"
+  }
+}
