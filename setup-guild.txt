@@ -104,7 +104,7 @@ DNS.1 = cardinal-flaxengroup.com.bd
 DNS.2 = cardinal-flaxengroup.com.bd
 
   - openssl req -new -nodes -out server.csr -newkey rsa:2048 -keyout server.key
-  - openssl x509 -req -in server.csr -CA rootCA.pem -CAkey rootCA.key -CAcreateserial -out server.crt -days 500 -sha256 -extfile v3.ext
+  - openssl x509 -req -in server.csr -CA rootCA.pem -CAkey rootCA.key -CAcreateserial -out server.crt -days 365 -sha256 -extfile v3.ext
   - openssl pkcs12 -inkey server.key -in server.crt -export -out server.pfx
   - update-ca-trust enable
   - to: /etc/pki/ca-trust/source/anchors/ (high priority) | /usr/share/pki/ca-trust-source/ (low priority)
