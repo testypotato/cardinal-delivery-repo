@@ -84,7 +84,33 @@
   - firewall-cmd --zone=public --add-port=80/tcp --permanent
   - firewall-cmd --reload
 
-# https
+# SelfSigned Certificate
+------------------------
+  - mkdir /etc/nginx/ssl
+  - openssl req -x509 -days 10 -nodes -newkey rsa:2048 -keyout /etc/nginx/ssl/self.key -out /etc/nginx/ssl/self.crt
+  - openssl dhparam -out /etc/nginx/ssl/dhparam.pem 2048
+
+-----Trusted:
+
+  - openssl genrsa -des3 -out rootCA.key 2048
+  - openssl req -x509 -new -nodes -key rootCA.key -sha256 -days 3650  -out rootCA.pem
+  - v3.ext:
+authorityKeyIdentifier=keyid,issuer
+basicConstraints=CA:FALSE
+keyUsage = digitalSignature, nonRepudiation, keyEncipherment, dataEncipherment
+subjectAltName = @alt_names
+[alt_names]
+DNS.1 = cardinal-flaxengroup.com.bd
+DNS.2 = cardinal-flaxengroup.com.bd
+
+  - openssl req -new -nodes -out server.csr -newkey rsa:2048 -keyout server.key
+  - openssl x509 -req -in server.csr -CA rootCA.pem -CAkey rootCA.key -CAcreateserial -out server.crt -days 500 -sha256 -extfile v3.ext
+  - openssl pkcs12 -inkey server.key -in server.crt -export -out server.pfx
+  - update-ca-trust enable
+  - to: /etc/pki/ca-trust/source/anchors/ (high priority) | /usr/share/pki/ca-trust-source/ (low priority)
+  - update-ca-trust extract
+
+# Certbot Certificate
 ------------------------
   - yum -y install yum-utils
   - yum-config-manager --enable rhui-REGION-rhel-server-extras rhui-REGION-rhel-server-optional
