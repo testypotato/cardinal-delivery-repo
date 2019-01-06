@@ -9,7 +9,7 @@ echo ${UPSTREAMHASH}
 if [ "$HEADHASH" != "$UPSTREAMHASH" ]
 then
 	git merge origin/master
-	rsync nginx.conf etc/nginx
+	rsync nginx.conf /etc/nginx/
 	cd api
 	npm install
 	cd ../fetcher

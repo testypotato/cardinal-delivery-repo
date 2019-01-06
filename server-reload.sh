@@ -1,5 +1,5 @@
 #!/bin/bash
-rsync nginx.conf etc/nginx/
+rsync nginx.conf /etc/nginx/
 cd api
 npm install
 cd ../fetcher
