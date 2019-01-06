@@ -1,8 +1,8 @@
 {
   "name": "fetcher",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Update fetcher",
+  "main": "fetcher.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
